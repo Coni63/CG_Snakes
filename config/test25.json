@@ -1,0 +1,9 @@
+{
+    "title": {
+        "2": "4 snakes - tricky",
+        "1": "4 snakes - tricky"
+    },
+    "testIn": "674432509\n9\n7\n4\n3 0 U\n3 1 U\n3 2 U\n3 3 U",
+    "isTest": false,
+    "isValidator": true
+}
