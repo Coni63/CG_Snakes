@@ -11,7 +11,7 @@ public class BoardController {
     private GraphicEntityModule graphicEntityModule;
     private TooltipModule tooltips;
     private Board board;
-    private Sprite[][] tiles;
+    private Sprite[][][] tiles;
     private int offsetX = 0;
     private int offsetY = 0;
     private String[][] tilesets = new String[4][];
@@ -23,7 +23,7 @@ public class BoardController {
         this.tooltips = tooltips;
         this.board = board;
 
-        this.tiles = new Sprite[board.getHeight()][board.getWidth()];  // contains tiles where the snake can move
+        this.tiles = new Sprite[4][board.getHeight()][board.getWidth()];  // contains tiles where the snake can move
 
         // each snake have a different color from a separated tileset
         tilesets[0] = loadTileset("snake_green.png");
@@ -69,7 +69,7 @@ public class BoardController {
         {
             for (int j = 0; j < nx+1; j++)
             {
-                int idx = rnd.nextInt(0, 4);
+                int idx = rnd.nextInt(4);
                 graphicEntityModule.createSprite()
                 .setImage(sand[idx])                    
                 .setX(Constants.TILE_WIDTH * j)
@@ -82,7 +82,7 @@ public class BoardController {
         {
             for (int j = 0; j < board.getWidth(); j++)
             {
-                int idx = rnd.nextInt(0, 4);
+                int idx = rnd.nextInt(4);
                 graphicEntityModule.createSprite()
                 .setImage(grass[idx])
                 .setX(offsetX + Constants.TILE_WIDTH * j)
@@ -95,12 +95,15 @@ public class BoardController {
         {
             for (int j = 0; j < board.getWidth(); j++)
             {
-                this.tiles[i][j] = graphicEntityModule.createSprite()
-                .setImage(tilesets[0][6])                    // transparent, just to setup the board
-                .setX(offsetX + Constants.TILE_WIDTH * j)
-                .setY(offsetY + Constants.TILE_WIDTH * i);
+                for (int k = 0; k < 4; k++)
+                {
+                    this.tiles[k][i][j] = graphicEntityModule.createSprite()
+                    .setImage(tilesets[0][6])                    // transparent, just to setup the board
+                    .setX(offsetX + Constants.TILE_WIDTH * j)
+                    .setY(offsetY + Constants.TILE_WIDTH * i);
+                }
 
-                tooltips.setTooltipText(this.tiles[i][j], i + ", " + j);
+                tooltips.setTooltipText(this.tiles[0][i][j], i + ", " + j);
             }
         }
 
@@ -115,20 +118,23 @@ public class BoardController {
         {
             for (int j = 0; j < board.getWidth(); j++)
             {
-                this.tiles[i][j].setImage(tilesets[0][6]);   // transparent, just to clear the board
+                for (int k = 0; k < 4; k++)
+                {
+                    this.tiles[k][i][j].setImage(tilesets[0][6]);   // transparent, just to clear the board
+                }
             }
         }
         
         // render every snake and proper apple
         for (int i = 0; i < board.NUM_SNAKES; i++)
         {
-            renderSnake(board.getSnake(i).getPosition(), tilesets[i]);
+            renderSnake(i, board.getSnake(i).getPosition(), tilesets[i]);
             // set the apple
-            setTiles(board.getApple(i).getPosition(), 15, tilesets[i]);
+            setTiles(i, board.getApple(i).getPosition(), 15, tilesets[i]);
         }
     }
 
-    private void renderSnake(ArrayList<Position> snake, String[] tileset)
+    private void renderSnake(int layer, ArrayList<Position> snake, String[] tileset)
     {
         /*
          * Ugly function to place snake body based on the orientation
@@ -139,19 +145,19 @@ public class BoardController {
         delta = snake.get(1).sub(snake.get(0));
         if (delta.equals(Position.DOWN))
         {
-            setTiles(snake.get(0), 3, tileset);
+            setTiles(layer, snake.get(0), 3, tileset);
         }
         if (delta.equals(Position.LEFT))
         {
-            setTiles(snake.get(0), 4, tileset);
+            setTiles(layer, snake.get(0), 4, tileset);
         }
         if (delta.equals(Position.RIGHT))
         {
-            setTiles(snake.get(0), 8, tileset);
+            setTiles(layer, snake.get(0), 8, tileset);
         }
         if (delta.equals(Position.UP))
         {
-            setTiles(snake.get(0), 9, tileset);
+            setTiles(layer, snake.get(0), 9, tileset);
         }
 
         // place the body with proper direction
@@ -162,51 +168,51 @@ public class BoardController {
 
             if (delta.equals(Position.UP) && delta2.equals(Position.UP))
             {
-                setTiles(snake.get(i), 7, tileset);
+                setTiles(layer, snake.get(i), 7, tileset);
             }
             else if (delta.equals(Position.UP) && delta2.equals(Position.LEFT))
             {
-                setTiles(snake.get(i), 2, tileset);
+                setTiles(layer, snake.get(i), 2, tileset);
             }
             else if (delta.equals(Position.UP) && delta2.equals(Position.RIGHT))
             {
-                setTiles(snake.get(i), 0, tileset);
+                setTiles(layer, snake.get(i), 0, tileset);
             }
             else if (delta.equals(Position.LEFT) && delta2.equals(Position.LEFT))
             {
-                setTiles(snake.get(i), 1, tileset);
+                setTiles(layer, snake.get(i), 1, tileset);
             }
             else if (delta.equals(Position.LEFT) && delta2.equals(Position.UP))
             {
-                setTiles(snake.get(i), 5, tileset);
+                setTiles(layer, snake.get(i), 5, tileset);
             }
             else if (delta.equals(Position.LEFT) && delta2.equals(Position.DOWN))
             {
-                setTiles(snake.get(i), 0, tileset);
+                setTiles(layer, snake.get(i), 0, tileset);
             }
             else if (delta.equals(Position.DOWN) && delta2.equals(Position.DOWN))
             {
-                setTiles(snake.get(i), 7, tileset);
+                setTiles(layer, snake.get(i), 7, tileset);
             }
             else if (delta.equals(Position.DOWN) && delta2.equals(Position.LEFT))
             {
-                setTiles(snake.get(i), 12, tileset);
+                setTiles(layer, snake.get(i), 12, tileset);
             }
             else if (delta.equals(Position.DOWN) && delta2.equals(Position.RIGHT))
             {
-                setTiles(snake.get(i), 5, tileset);
+                setTiles(layer, snake.get(i), 5, tileset);
             }
             else if (delta.equals(Position.RIGHT) && delta2.equals(Position.RIGHT))
             {
-                setTiles(snake.get(i), 1, tileset);
+                setTiles(layer, snake.get(i), 1, tileset);
             }
             else if (delta.equals(Position.RIGHT) && delta2.equals(Position.DOWN))
             {
-                setTiles(snake.get(i), 2, tileset);
+                setTiles(layer, snake.get(i), 2, tileset);
             }
             else if (delta.equals(Position.RIGHT) && delta2.equals(Position.UP))
             {
-                setTiles(snake.get(i), 12, tileset);
+                setTiles(layer, snake.get(i), 12, tileset);
             }
 
         }
@@ -215,25 +221,25 @@ public class BoardController {
         delta = snake.get(snake.size()-1).sub(snake.get(snake.size()-2));
         if (delta.equals(Position.DOWN))
         {
-            setTiles(snake.get(snake.size()-1), 13, tileset);
+            setTiles(layer, snake.get(snake.size()-1), 13, tileset);
         }
         if (delta.equals(Position.LEFT))
         {
-            setTiles(snake.get(snake.size()-1), 14, tileset);
+            setTiles(layer, snake.get(snake.size()-1), 14, tileset);
         }
         if (delta.equals(Position.RIGHT))
         {
-            setTiles(snake.get(snake.size()-1), 18, tileset);
+            setTiles(layer, snake.get(snake.size()-1), 18, tileset);
         }
         if (delta.equals(Position.UP))
         {
-            setTiles(snake.get(snake.size()-1), 19, tileset);
+            setTiles(layer, snake.get(snake.size()-1), 19, tileset);
         }
     }
 
-    private void setTiles(Position pos, int tileIdx, String[] tileset)
+    private void setTiles(int layer, Position pos, int tileIdx, String[] tileset)
     {
-        this.tiles[pos.row][pos.col].setImage(tileset[tileIdx]);
+        this.tiles[layer][pos.row][pos.col].setImage(tileset[tileIdx]);
     }
 
     private String[] loadTileset(String img)
