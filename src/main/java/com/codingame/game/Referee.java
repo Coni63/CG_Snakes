@@ -12,9 +12,6 @@ import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.tooltip.TooltipModule;
 import com.google.inject.Inject;
 
-/*
- * Current issue, when there is multiple output for 1 snake we apply all move at onvce only for this snake... not good !!
- */
 
 public class Referee extends AbstractReferee {
     @Inject private SoloGameManager<Player> gameManager;
@@ -49,10 +46,10 @@ public class Referee extends AbstractReferee {
             board = new Board(seed, width, height, numSnakes, heads);            
         } catch (Exception ex) {
             Random random = new Random();
-            Long seed = random.nextLong(0, Long.MAX_VALUE);
-            int width = random.nextInt(Constants.MIN_COLS, Constants.MAX_COLS);
-            int height = random.nextInt(Constants.MIN_ROWS, Constants.MAX_ROWS);
-            int numSnakes = random.nextInt(Constants.MIN_SNAKES, Constants.MAX_SNAKES);
+            Long seed = random.nextLong();
+            int width = Constants.MIN_COLS + random.nextInt(Constants.MAX_COLS - Constants.MIN_COLS); // random.nextInt(int, int) is not working on CG...
+            int height = Constants.MIN_ROWS + random.nextInt(Constants.MAX_ROWS - Constants.MIN_ROWS);
+            int numSnakes = Constants.MIN_SNAKES + random.nextInt(Constants.MAX_SNAKES - Constants.MIN_SNAKES);
 
             // when there is no test case (should not occurs)
             // the starting position is fixed in corner like
