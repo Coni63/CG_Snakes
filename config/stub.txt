@@ -2,10 +2,9 @@ read height:int width:int
 gameloop
     read seed:int
     read numSnake:int
-    loop numSnake 
-    read snakeSize:int 
-    loop snakeSize read bodyRow:int bodyCol:int
-    read appleRow:int appleCol:int
+    read numParts:int
+    loop numParts read snakeId:int bodyRow:int bodyCol:int
+    loop numSnake read appleId:int appleRow:int appleCol:int
     loop 4 write DDLLRRUU
 
 STATEMENT
@@ -16,11 +15,13 @@ height: height of the board
 width: width of the board
 seed: current seed of the board (used to spawn apples)
 numSnake: the number of snakes you control
-snakeSize: length of the current snake (>=3)
+numParts: sum of snake's length
+snakeId: id of the snake -- positions are provided head to tail
 bodyRow: row of this part of the snake (from head to tail)
 bodyCol: col of this part of the snake (from head to tail)
+appleId: id of the snake that wants to eat this apple
 appleRow: row of the apple for this snake
 appleCol: col of the apple for this snake
 
 OUTPUT
-sequence of U, D, L, R (up to 512 chars)
+sequence of U, D, L, R (up to 128 chars)

@@ -81,18 +81,28 @@ public class Board {
         ArrayList<String> ans = new ArrayList<String>();
         ans.add(String.valueOf(this.seed));         // current seed - change after every apple consumed
         ans.add(String.valueOf(this.NUM_SNAKES));   // fixed value but required to iterate over every snakes
+
+        // length of the snake
+        int numParts = 0;
         for (int i = 0; i < this.NUM_SNAKES; i++)
         {
-            Snake s = this.snakes[i];
-            Apple a = this.apples[i];
+            numParts += this.snakes[i].getSize();
+        }
+        ans.add(String.valueOf(numParts)); 
 
-            ans.add(String.valueOf(s.getSize())); // length of the snake
-            for (Position p: s.getPosition())     // add all position of the snake from head to tail
+        // position of bodies
+        for (int i = 0; i < this.NUM_SNAKES; i++)
+        {
+            for (Position p: this.snakes[i].getPosition())     // add all position of the snake from head to tail
             {
-                ans.add(p.toString());            // position of the body part in format "row col"
+                ans.add(i + " " + p.toString());              // position of the body part in format "snake_id row col"
             }
-            // include apple position
-            ans.add(a.getPosition().toString());  // position of the related apple in format "row col"
+        }
+
+        // position of apples
+        for (int i = 0; i < this.NUM_SNAKES; i++)
+        {
+            ans.add(i + " " + this.apples[i].getPosition().toString());  // position of the related apple in format "row col"
         }
         return ans;
     }
